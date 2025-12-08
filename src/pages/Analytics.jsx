@@ -89,27 +89,31 @@ export const Analytics = () => {
 
         {/* Stats */}
         <div className="space-y-6">
-          <div>
+          {/* Total Trails */}
+          <div className="flex items-center gap-3">
             <Mountain size={40} />
-            <p className="font-semibold mt-2">Total Trails</p>
-            <p>{trails.length}</p>
+            <div>
+              <p className="font-semibold leading-tight">Total Trails</p>
+              <p>{trails.length}</p>
+            </div>
           </div>
 
-          <div>
+          {/* Total Distance */}
+          <div className="flex items-center gap-3">
             <TrendingUp size={40} />
-            <p className="font-semibold mt-2">Total Distance</p>
-            <p>
-              {trails
-                .reduce((sum, t) => sum + t.distance, 0)
-                .toFixed(1)}{" "}
-              km
-            </p>
+            <div>
+              <p className="font-semibold leading-tight">Total Distance</p>
+              <p>{trails.reduce((sum, t) => sum + t.distance, 0).toFixed(1)} km</p>
+            </div>
           </div>
 
-          <div>
+          {/* Time Average */}
+          <div className="flex items-center gap-3">
             <Clock size={40} />
-            <p className="font-semibold mt-2">Time Average</p>
-            <p>3.5 hours</p>
+            <div>
+              <p className="font-semibold leading-tight">Time Average</p>
+              <p>3.5 hours</p>
+            </div>
           </div>
         </div>
       </aside>
