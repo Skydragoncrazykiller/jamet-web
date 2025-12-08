@@ -266,7 +266,7 @@ export const Analytics = () => {
           <h3 className="font-semibold text-gray-700 mb-6">
             Perbandingan Jarak & Elevasi Trail
           </h3>
-          <div className="h-[500px] w-full">
+          <div className="h-[300px] w-full">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
                 data={distanceData}
