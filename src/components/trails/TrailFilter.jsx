@@ -1,41 +1,36 @@
+// src/components/trails/TrailFilter.jsx
 import { Search, Filter } from "lucide-react";
 
 export const TrailFilter = ({
-  searchTerm,
-  onSearchChange,
-  selectedDifficulty,
-  onDifficultyChange,
-  selectedSafety,
-  onSafetyChange,
+  searchTerm, onSearchChange,
+  selectedDifficulty, onDifficultyChange,
+  selectedLocation, onLocationChange,
+  distanceRange, onDistanceRangeChange,
+  locations
 }) => {
   return (
     <div className="bg-white rounded-xl shadow-md p-6 mb-6">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+
         {/* Search */}
-        <div className="relative">
-          <Search
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-            size={20}
-          />
+        <div className="relative md:col-span-2">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
           <input
             type="text"
-            placeholder="Cari trail..."
+            placeholder="Cari gunung / lokasi..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none"
+            className="w-full pl-10 pr-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
-        {/* Difficulty Filter */}
+        {/* Difficulty */}
         <div className="relative">
-          <Filter
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-            size={20}
-          />
+          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
           <select
             value={selectedDifficulty}
             onChange={(e) => onDifficultyChange(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none appearance-none bg-white"
+            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
           >
             <option value="all">Semua Tingkat</option>
             <option value="easy">Mudah</option>
@@ -44,24 +39,38 @@ export const TrailFilter = ({
           </select>
         </div>
 
-        {/* Safety Filter */}
+        {/* Location */}
         <div className="relative">
-          <Filter
-            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
-            size={20}
-          />
+          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
           <select
-            value={selectedSafety}
-            onChange={(e) => onSafetyChange(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none appearance-none bg-white"
+            value={selectedLocation}
+            onChange={(e) => onLocationChange(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500"
           >
-            <option value="all">Semua Kondisi</option>
-            <option value="safe">Aman (60+)</option>
-            <option value="caution">Hati-hati (40-59)</option>
-            <option value="unsafe">Tidak Aman (&lt;40)</option>
+            {locations.map((loc) => (
+              <option key={loc} value={loc}>
+                {loc === "all" ? "Semua Lokasi" : loc}
+              </option>
+            ))}
           </select>
         </div>
+      </div>
+
+      {/* Distance Slider */}
+      <div className="mt-4">
+        <label className="text-sm font-semibold text-gray-700">
+          Maks Jarak: {distanceRange[1]} km
+        </label>
+        <input
+          type="range"
+          min={0}
+          max={50}
+          value={distanceRange[1]}
+          onChange={(e) => onDistanceRangeChange([0, Number(e.target.value)])}
+          className="w-full mt-2"
+        />
       </div>
     </div>
   );
 };
+

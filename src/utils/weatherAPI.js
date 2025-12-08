@@ -1,26 +1,11 @@
-import axios from "axios";
+// src/utils/weatherAPI.js
 
-const API_KEY = process.env.REACT_APP_WEATHER_API_KEY;
-const BASE_URL = "https://api.openweathermap.org/data/2.5";
-
-export const getWeatherByCoords = async (lat, lon) => {
-  try {
-    const response = await axios.get(`${BASE_URL}/weather`, {
-      params: {
-        lat: lat,
-        lon: lon,
-        appid: API_KEY,
-        units: "metric",
-        lang: "id",
-      },
-    });
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching weather:", error);
-    return null;
-  }
-};
-
+/**
+ * Mendapatkan URL ikon cuaca dari OpenWeatherMap berdasarkan kode ikon
+ * @param {string} iconCode - Kode ikon dari API OpenWeatherMap (misalnya '04d')
+ * @returns {string} URL gambar ikon
+ */
 export const getWeatherIcon = (iconCode) => {
+  if (!iconCode) return 'https://openweathermap.org/img/wn/50d@2x.png'; // Default
   return `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
 };

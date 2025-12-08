@@ -202,3 +202,5 @@ html {
 .card-premium:hover {
   transform: translateY(-8px);
 }
+
+@import "maplibre-gl/dist/maplibre-gl.css";
