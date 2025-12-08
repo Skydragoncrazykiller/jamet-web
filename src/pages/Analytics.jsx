@@ -96,31 +96,31 @@ export const Analytics = () => {
           {/* Stats Group */}
           <div className="space-y-6 w-full flex flex-col items-center px-2">
             {/* Total Trails */}
-            <div className="flex items-center gap-3 w-fit text-left">
+            <div className="flex items-center gap-4 w-fit">
               <Mountain size={28} strokeWidth={1.5} className="opacity-90" />
-              <div>
+              <div className="text-center">
                 <p className="font-medium text-xs text-blue-200 uppercase tracking-wider mb-0.5">Total Trails</p>
-                <p className="text-xl font-bold leading-none">{trails.length}</p>
+                <p className="text-lg font-bold leading-none">{trails.length}</p>
               </div>
             </div>
 
             {/* Total Distance */}
-            <div className="flex items-center gap-3 w-fit text-left">
+            <div className="flex items-center gap-4 w-fit">
               <TrendingUp size={28} strokeWidth={1.5} className="opacity-90" />
-              <div>
+              <div className="text-center">
                 <p className="font-medium text-xs text-blue-200 uppercase tracking-wider mb-0.5">Total Distance</p>
-                <p className="text-xl font-bold leading-none">
+                <p className="text-lg font-bold leading-none">
                   {trails.reduce((sum, t) => sum + t.distance, 0).toFixed(1)} <span className="text-sm font-normal">km</span>
                 </p>
               </div>
             </div>
 
             {/* Time Average */}
-            <div className="flex items-center gap-3 w-fit text-left">
+            <div className="flex items-center gap-4 w-fit">
               <Clock size={28} strokeWidth={1.5} className="opacity-90" />
-              <div>
+              <div className="text-center">
                 <p className="font-medium text-xs text-blue-200 uppercase tracking-wider mb-0.5">Time Average</p>
-                <p className="text-xl font-bold leading-none">3.5 <span className="text-sm font-normal">hours</span></p>
+                <p className="text-lg font-bold leading-none">3.5 <span className="text-sm font-normal">hours</span></p>
               </div>
             </div>
           </div>
