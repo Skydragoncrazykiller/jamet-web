@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { getWeatherByCoords } from "../utils/weatherAPI";
 
+/**
+ * Custom hook for fetching weather data
+ * @param {number} lat - Latitude
+ * @param {number} lon - Longitude
+ * @returns {object} { weather, loading, error }
+ */
 export const useWeather = (lat, lon) => {
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -8,22 +14,22 @@ export const useWeather = (lat, lon) => {
 
   useEffect(() => {
     const fetchWeather = async () => {
-      if (!lat || !lon) return;
-
       try {
         setLoading(true);
+        setError(null);
         const data = await getWeatherByCoords(lat, lon);
         setWeather(data);
-        setError(null);
       } catch (err) {
-        setError("Gagal mengambil data cuaca");
-        console.error(err);
+        console.error("Error in useWeather hook:", err);
+        setError(err.message || "Failed to fetch weather");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchWeather();
+    if (lat && lon) {
+      fetchWeather();
+    }
   }, [lat, lon]);
 
   return { weather, loading, error };

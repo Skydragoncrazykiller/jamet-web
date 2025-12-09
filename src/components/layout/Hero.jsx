@@ -3,21 +3,15 @@ import { Mountain, CloudRain, MapPin, ArrowDown } from "lucide-react";
 export const Hero = () => {
   return (
     <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-900 via-purple-900 to-indigo-900">
-        {/* Overlay patterns */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl animate-float"></div>
-          <div
-            className="absolute top-0 right-0 w-96 h-96 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl animate-float"
-            style={{ animationDelay: "1s" }}
-          ></div>
-          <div
-            className="absolute bottom-0 left-1/2 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl animate-float"
-            style={{ animationDelay: "2s" }}
-          ></div>
-        </div>
-      </div>
+      {/* Background Video */}
+      <video
+        className="absolute inset-0 w-full h-full object-cover z-0"
+        src="/videos/bg.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
+      />
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 py-20">
