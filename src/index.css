@@ -166,3 +166,5 @@ html {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+@import "maplibre-gl/dist/maplibre-gl.css";

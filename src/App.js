@@ -4,6 +4,10 @@ import { Hero } from "./components/layout/Hero";
 import { Home } from "./pages/Home";
 import { Analytics } from "./pages/Analytics";
 import { About } from "./pages/About";
+import { Trails } from "./pages/Trails";      // ⬅ Import Trails
+import { TrailPage } from "./pages/TrailPage"; // ⬅ Import Trail Detail
+import { TrailDetailPage } from "./pages/TrailDetailPage";
+
 
 function App() {
   return (
@@ -21,8 +25,13 @@ function App() {
               </>
             }
           />
+
+          <Route path="/trails" element={<Trails />} />
+          <Route path="/trails/:id" element={<TrailPage />} />
+          <Route path="/trails/:id" element={<TrailDetailPage />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/about" element={<About />} />
+          <Route path="/trail/:id" element={<TrailPage />} />
         </Routes>
 
         {/* Footer */}

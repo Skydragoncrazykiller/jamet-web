@@ -1,236 +1,168 @@
-import { useState, useEffect } from "react";
-import {
-  Mountain,
-  MapPin,
-  Clock,
-  TrendingUp,
-  AlertTriangle,
-  CheckCircle,
-} from "lucide-react";
-import { WeatherCard } from "../weather/WeatherCard";
-import {
-  getCompleteWeatherData,
-  analyzeForecastForHiking,
-  calculateSafetyScore,
-} from "../../utils/weatherAPI";
+// src/components/trails/TrailDetail.jsx
 
-export const TrailDetail = ({ trail }) => {
-  const [weatherData, setWeatherData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [recommendation, setRecommendation] = useState(null);
+import { MapPin, Mountain, Timer, Star, TrendingUp, Ruler, Shieldcheck, Droplet, Wind, Cloud} from "lucide-react";
+import useWeather from "../../hooks/useWeather";
+import { getWeatherIcon } from "../../utils/weatherAPI";
+import { TrailMap } from "../map/TrailMap";
 
-  useEffect(() => {
-    const fetchWeather = async () => {
-      try {
-        setLoading(true);
-        const data = await getCompleteWeatherData(
-          trail.coordinates.lat,
-          trail.coordinates.lng
-        );
 
-        setWeatherData(data);
+export const TrailDetail = ({ trail, invisible}) => {
+  const [lat, lng] = trail.coordinates ?? [];
+  const { weather } = useWeather(lat, lng);
 
-        // Analyze forecast untuk rekomendasi
-        const analysis = analyzeForecastForHiking(data.forecast);
-        setRecommendation(analysis);
-      } catch (error) {
-        console.error("Error fetching weather:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchWeather();
-  }, [trail]);
-
-  // Calculate dynamic safety score
-  const safetyScore = weatherData?.current
-    ? calculateSafetyScore(weatherData.current)
-    : trail.safetyScore;
-
-  const getSafetyColor = (score) => {
-    if (score >= 80) return "text-green-600 bg-green-50 border-green-200";
-    if (score >= 60) return "text-yellow-600 bg-yellow-50 border-yellow-200";
-    return "text-red-600 bg-red-50 border-red-200";
-  };
-
-  const getDifficultyBadge = (difficulty) => {
-    const badges = {
-      mudah: { color: "bg-green-500", text: "Mudah" },
-      sedang: { color: "bg-yellow-500", text: "Sedang" },
-      sulit: { color: "bg-red-500", text: "Sulit" },
-    };
-    return badges[difficulty] || badges.mudah;
-  };
+  
+  if (!trail) return null;
 
   return (
-    <div className="max-w-4xl mx-auto">
-      {/* Hero Image */}
-      {trail.image && (
-        <div className="relative h-64 md:h-80 rounded-xl overflow-hidden mb-6 shadow-mountain">
-          <img
-            src={trail.image}
-            alt={trail.name}
-            className="w-full h-full object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-          <div className="absolute bottom-4 left-4 right-4">
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
-              {trail.name}
-            </h1>
-            <div className="flex items-center gap-2 text-white/90">
-              <MapPin size={16} />
-              <span>{trail.location}</span>
-            </div>
-          </div>
-        </div>
-      )}
+    <div className="bg-white rounded-2xl p-5 md:p-8 shadow-xl max-h-[80vh] overflow-y-auto space-y-6">
+      
+      {/* Gambar */}
+      <div className="relative">
+        <img
+          src={trail.image}
+          alt={trail.name}
+          className="w-full h-56 md:h-72 object-cover rounded-xl"
+        />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column - Trail Info */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Trail Stats */}
-          <div className="glass-light rounded-xl p-6 shadow-mountain">
-            <h2 className="text-xl font-bold text-slate-800 mb-4 flex items-center gap-2">
-              <Mountain size={24} className="text-orange-500" />
-              Informasi Trail
-            </h2>
-
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <div>
-                <p className="text-sm text-slate-500 mb-1">Ketinggian</p>
-                <p className="text-lg font-bold text-slate-800">
-                  {trail.elevation} mdpl
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-slate-500 mb-1">Durasi</p>
-                <p className="text-lg font-bold text-slate-800">
-                  {trail.duration}
-                </p>
-              </div>
-              <div>
-                <p className="text-sm text-slate-500 mb-1">Tingkat Kesulitan</p>
-                <span
-                  className={`inline-block ${
-                    getDifficultyBadge(trail.difficulty).color
-                  } text-white text-sm px-3 py-1 rounded-full font-semibold`}
-                >
-                  {getDifficultyBadge(trail.difficulty).text}
-                </span>
-              </div>
-            </div>
-
-            {/* Description */}
-            <div className="mt-6">
-              <h3 className="font-semibold text-slate-800 mb-2">Deskripsi</h3>
-              <p className="text-slate-600 leading-relaxed">
-                {trail.description ||
-                  "Jalur hiking yang menantang dengan pemandangan spektakuler. Cocok untuk pendaki berpengalaman yang mencari petualangan di alam."}
-              </p>
-            </div>
-
-            {/* Tips */}
-            {trail.tips && (
-              <div className="mt-6">
-                <h3 className="font-semibold text-slate-800 mb-2">
-                  Tips & Persiapan
-                </h3>
-                <ul className="space-y-2 text-slate-600">
-                  {trail.tips.map((tip, index) => (
-                    <li key={index} className="flex items-start gap-2">
-                      <CheckCircle
-                        size={16}
-                        className="text-green-500 mt-0.5 flex-shrink-0"
-                      />
-                      <span>{tip}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          {/* Safety Score Card */}
-          <div
-            className={`rounded-xl p-6 shadow-mountain border-2 ${getSafetyColor(
-              safetyScore
-            )}`}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center gap-2">
-                <TrendingUp size={24} />
-                <h3 className="text-lg font-bold">Safety Score</h3>
-              </div>
-              <span className="text-3xl font-black">{safetyScore}%</span>
-            </div>
-
-            {recommendation && (
-              <div className="mt-4">
-                <div className="flex items-start gap-2">
-                  {recommendation.isRecommended ? (
-                    <CheckCircle size={20} className="mt-0.5" />
-                  ) : (
-                    <AlertTriangle size={20} className="mt-0.5" />
-                  )}
-                  <p className="font-medium">{recommendation.reason}</p>
-                </div>
-
-                {recommendation.stats && (
-                  <div className="grid grid-cols-3 gap-2 mt-3 text-sm">
-                    <div>
-                      <span className="opacity-75">Avg Temp:</span>
-                      <p className="font-semibold">
-                        {recommendation.stats.avgTemp}°C
-                      </p>
-                    </div>
-                    <div>
-                      <span className="opacity-75">Max Wind:</span>
-                      <p className="font-semibold">
-                        {recommendation.stats.maxWind} m/s
-                      </p>
-                    </div>
-                    <div>
-                      <span className="opacity-75">Rain:</span>
-                      <p className="font-semibold">
-                        {recommendation.stats.totalRain} mm
-                      </p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Right Column - Weather */}
-        <div className="lg:col-span-1">
-          {loading ? (
-            <div className="glass-light rounded-xl p-6 shadow-mountain">
-              <div className="animate-pulse space-y-4">
-                <div className="h-4 bg-slate-200 rounded w-3/4"></div>
-                <div className="h-20 bg-slate-200 rounded"></div>
-                <div className="h-4 bg-slate-200 rounded w-1/2"></div>
-              </div>
-            </div>
-          ) : (
-            <WeatherCard
-              weather={weatherData?.current}
-              forecast={weatherData?.forecast}
+        {/* Weather badge kecil */}
+        {weather && (
+          <div className="absolute top-4 right-4 bg-white/80 backdrop-blur px-3 py-1 rounded-lg shadow-md flex items-center gap-1">
+            <img
+              src={getWeatherIcon(weather.weather?.[0]?.icon)}
+              alt="cuaca"
+              className="w-6 h-6"
             />
-          )}
-        </div>
+            <span className="text-sm font-semibold text-gray-700">
+              {Math.round(weather.main.temp)}°C
+            </span>
+          </div>
+        )}
       </div>
 
-      {/* Action Button */}
-      <div className="mt-6 flex gap-4">
-        <button className="flex-1 bg-orange-500 hover:bg-orange-600 text-white font-bold py-4 px-6 rounded-xl transition-colors shadow-accent-hover">
-          Mulai Perencanaan
-        </button>
-        <button className="glass-light hover:bg-slate-100 text-slate-700 font-semibold py-4 px-6 rounded-xl transition-colors shadow-mountain">
-          Simpan Trail
-        </button>
+      {/* Title + Location */}
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 leading-tight">
+          {trail.name}
+        </h2>
+        <p className="flex items-center gap-2 text-gray-600 mt-1">
+          <MapPin size={18} /> {trail.location}
+        </p>
       </div>
+
+      {/* Main info chips */}
+      <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+        <InfoChip icon={<Mountain size={18} />} label="Kesulitan" value={trail.difficulty} />
+        <InfoChip icon={<TrendingUp size={18} />} label="Elevasi" value={`${trail.elevation} m`} />
+        <InfoChip icon={<Timer size={18} />} label="Durasi" value={trail.duration} />
+        <InfoChip icon={<Star size={18} className="text-yellow-500" />} label="Rating" value={trail.rating} />
+        <InfoChip icon={<Mountain size={18} />} label="Jarak" value={`${trail.distance} km`} />
+      </div>
+
+    
+{/* BAGIAN 3.5: Detail Cuaca Diperbesar */}
+{weather && (
+    <div className="pt-4">
+        <h3 className="font-bold text-gray-800 mb-2 flex items-center gap-1">
+             Cuaca Saat Ini
+        </h3>
+        
+        {/* Detail Cuaca Utama (Suhu dan Deskripsi) */}
+        <div className="bg-blue-50/80 p-4 rounded-xl mb-4 flex items-center justify-between shadow-inner">
+            <div className="flex items-center gap-3">
+                {/* Icon cuaca besar */}
+                <img
+                    src={getWeatherIcon(weather.weather?.[0]?.icon)}
+                    alt="cuaca"
+                    className="w-10 h-10"
+                />
+                <div>
+                    {/* Suhu diperbesar */}
+                    <p className="text-xl font-bold text-black-800">
+                        {Math.round(weather.main.temp)}°C
+                    </p>
+                    {/* Deskripsi cuaca */}
+                    <p className="capitalize text-gray-700 text-sm">
+                        {weather.weather?.[0]?.description}
+                    </p>
+                </div>
+            </div>
+            {/* Info Tambahan Tekanan Udara */}
+             <div>
+                <p className="text-xl font-bold text-black-800">{weather.main.pressure} hPa</p> 
+                 <p className="capitalize text-gray-700 text-sm">Tekanan</p> 
+             </div>
+        </div>
+
+        {/* Detail Angin, Kelembaban, dan Awan (Grid 3 Kolom dengan Ikon dan Teks Besar) */}
+        <div className="grid grid-cols-3 gap-3">
+            
+            {/* Kecepatan Angin */}
+            <div className="bg-white p-3 rounded-lg border border-gray-100 text-center shadow-sm">
+                <Wind size={24} className="mx-auto text-blue-500 mb-1" />
+                <p className="text-xl font-bold text-gray-800">{weather.wind.speed} m/s</p>
+                <p className="text-xs text-gray700">Kecepatan Angin</p>
+            </div>
+            
+            {/* Kelembaban */}
+            <div className="bg-white p-3 rounded-lg border border-gray-100 text-center shadow-sm">
+                <Droplet size={24} className="mx-auto text-cyan-500 mb-1" />
+                <p className="text-xl font-bold text-gray-800">{weather.main.humidity}%</p>
+                <p className="text-xs text-gray700">Kelembaban</p>
+            </div>
+            
+            {/* Awan */}
+            <div className="bg-white p-3 rounded-lg border border-gray-100 text-center shadow-sm">
+                <Cloud size={24} className="mx-auto text-gray-400 mb-1" />
+                <p className="text-xl font-bold text-gray-800">{weather.clouds.all}%</p>
+                <p className="text-xs text-gray700">Persentase Awan</p>
+            </div>
+        </div>
+    </div>
+)}
+
+      {/* Deskripsi */}
+      <div>
+        <h3 className="font-semibold text-gray-800 mb-1">Deskripsi</h3>
+        <p className="text-gray-600 leading-relaxed text-sm">
+          {trail.description}
+        </p>
+      </div>
+
+      {/* Tips */}
+      <div>
+        <h3 className="font-semibold text-gray-800 mb-1">Tips Keamanan</h3>
+        <ul className="text-gray-600 text-sm list-disc pl-5 space-y-1">
+          {trail.safetyTips?.map((tip, i) => <li key={i}>{tip}</li>)}
+        </ul>
+      </div>
+
+      {/* 🌍 Peta Lokasi */}
+      {lat && lng && (
+        <div>
+          <h3 className="font-semibold text-gray-800 mb-2">Peta Lokasi</h3>
+          <div className="h-64 rounded-xl overflow-hidden shadow-lg"> 
+            <TrailMap
+              lat={lat}
+              lng={lng}
+              name={trail.name}
+              // Meneruskan seluruh objek trail agar ID-nya bisa dipakai sebagai key/trigger
+              trail={trail} 
+            />
+          </div>
+        </div>
+      )}
+      {/* Akhir Perbaikan Peta Lokasi */}
     </div>
   );
 };
+
+
+
+const InfoChip = ({ icon, value, label }) => (
+  <div className="bg-gray-100 p-3 rounded-lg shadow-sm text-center">
+    <div className="flex justify-center text-gray-700 mb-1">{icon}</div>
+    <p className="font-bold text-gray-900 text-xs md:text-sm">{value}</p>
+    <p className="text-[10px] text-gray-500">{label}</p>
+  </div>
+);
+

@@ -1,165 +1,58 @@
+// src/utils/safetyCalculator.js
+
 /**
- * Calculate safety score based on weather conditions and trail difficulty
- * @param {object} weather - Weather data from API
- * @param {object} trail - Trail data
- * @returns {number} Safety score (0-100)
+ * Menghitung skor keamanan (0-100) berdasarkan cuaca dan karakteristik trail.
+ * @param {object} weather - Objek cuaca dari OpenWeatherMap
+ * @param {object} trail - Objek data trail
+ * @returns {number} Safety Score
  */
 export const calculateSafetyScore = (weather, trail) => {
-  if (!weather) return 50;
+  if (!weather || !trail) return 0;
 
   let score = 100;
+  const temp = weather.main.temp; // Suhu (°C)
+  const humidity = weather.main.humidity; // Kelembaban (%)
+  const weatherId = weather.weather[0].id; // ID Cuaca
+  const difficulty = trail.difficulty;
 
-  // Temperature factor
-  const temp = weather.main.temp;
-  if (temp > 35 || temp < 10) score -= 20;
-  else if (temp > 30 || temp < 15) score -= 10;
+  // 1. Suhu (Ideal 20-25°C)
+  if (temp < 15 || temp > 30) score -= 15;
+  if (temp < 10 || temp > 35) score -= 25;
 
-  // Wind factor
-  const windSpeed = weather.wind.speed;
-  if (windSpeed > 15) score -= 30;
-  else if (windSpeed > 10) score -= 15;
-  else if (windSpeed > 7) score -= 5;
-
-  // Rain factor
-  const rain = weather.rain?.["1h"] || 0;
-  if (rain > 5) score -= 40;
-  else if (rain > 2) score -= 20;
-  else if (rain > 0) score -= 10;
-
-  // Weather condition factor
-  const condition = weather.weather[0].main;
-  if (condition === "Thunderstorm") score -= 50;
-  else if (condition === "Rain" || condition === "Snow") score -= 20;
-  else if (condition === "Drizzle") score -= 10;
-
-  // Visibility factor
-  const visibility = weather.visibility;
-  if (visibility < 1000) score -= 20;
-  else if (visibility < 3000) score -= 10;
-
-  // Humidity factor
-  const humidity = weather.main.humidity;
-  if (humidity > 90) score -= 10;
-  else if (humidity < 30) score -= 5;
-
-  // Trail difficulty factor
-  if (trail) {
-    const difficulty = trail.difficulty;
-    if (difficulty === "sulit" || difficulty === "hard") {
-      score -= 5; // Harder trails are slightly riskier
-    }
-
-    // Elevation factor
-    if (trail.elevation > 2000) score -= 5;
+  // 2. Kelembaban (Ideal 60-80%)
+  if (humidity > 90 || humidity < 50) score -= 10;
+  
+  // 3. Kondisi Cuaca (Rain/Thunder/Snow)
+  if (weatherId >= 200 && weatherId < 600) { // Thunderstorm, Drizzle, Rain
+      score -= 30; 
+  } else if (weatherId >= 600 && weatherId < 700) { // Snow
+      score -= 40;
+  } else if (weatherId >= 700 && weatherId < 800) { // Atmosphere (Fog, Mist)
+      score -= 10; 
   }
 
-  return Math.max(0, Math.min(100, score));
+  // 4. Faktor Kesulitan Trail
+  if (difficulty === 'medium') score -= 5;
+  if (difficulty === 'hard') score -= 10;
+  
+  // Pastikan skor tidak di bawah 0
+  return Math.max(0, score); 
 };
 
+
 /**
- * Get safety label and color based on score
- * @param {number} score - Safety score (0-100)
- * @returns {object} { label, color, description }
+ * Mendapatkan label keamanan berdasarkan skor.
+ * @param {number} score - Safety Score
+ * @returns {{label: string, color: string}}
  */
 export const getSafetyLabel = (score) => {
   if (score >= 80) {
-    return {
-      label: "Sangat Aman",
-      color: "bg-green-500",
-      description: "Kondisi ideal untuk hiking",
-    };
+    return { label: "Sangat Aman", color: "bg-green-600" };
   } else if (score >= 60) {
-    return {
-      label: "Aman",
-      color: "bg-blue-500",
-      description: "Kondisi baik, tetap waspada",
-    };
+    return { label: "Aman", color: "bg-yellow-600" };
   } else if (score >= 40) {
-    return {
-      label: "Hati-hati",
-      color: "bg-yellow-500",
-      description: "Kondisi kurang ideal, persiapkan diri dengan baik",
-    };
-  } else if (score >= 20) {
-    return {
-      label: "Berbahaya",
-      color: "bg-orange-500",
-      description: "Tidak direkomendasikan untuk hiking",
-    };
+    return { label: "Perlu Hati-hati", color: "bg-orange-600" };
   } else {
-    return {
-      label: "Sangat Berbahaya",
-      color: "bg-red-500",
-      description: "Tunda perjalanan Anda",
-    };
+    return { label: "Tidak Direkomendasikan", color: "bg-red-600" };
   }
-};
-
-/**
- * Get detailed safety recommendations
- * @param {object} weather - Weather data
- * @param {number} score - Safety score
- * @returns {array} Array of recommendation strings
- */
-export const getSafetyRecommendations = (weather, score) => {
-  const recommendations = [];
-
-  if (!weather) return recommendations;
-
-  // Temperature recommendations
-  const temp = weather.main.temp;
-  if (temp > 30) {
-    recommendations.push("🌡️ Suhu tinggi - bawa air minum yang cukup");
-  } else if (temp < 15) {
-    recommendations.push("🧥 Suhu rendah - bawa jaket dan pakaian hangat");
-  }
-
-  // Wind recommendations
-  const windSpeed = weather.wind.speed;
-  if (windSpeed > 10) {
-    recommendations.push("💨 Angin kencang - hindari area terbuka dan tebing");
-  }
-
-  // Rain recommendations
-  const rain = weather.rain?.["1h"] || 0;
-  if (rain > 0) {
-    recommendations.push(
-      "🌧️ Hujan - bawa jas hujan dan hati-hati di jalur licin"
-    );
-  }
-
-  // Weather condition
-  const condition = weather.weather[0].main;
-  if (condition === "Thunderstorm") {
-    recommendations.push(
-      "⚠️ Badai petir - SANGAT BERBAHAYA, tunda perjalanan!"
-    );
-  }
-
-  // Visibility
-  const visibility = weather.visibility;
-  if (visibility < 3000) {
-    recommendations.push(
-      "🌫️ Jarak pandang terbatas - gunakan GPS dan tetap di jalur"
-    );
-  }
-
-  // Humidity
-  const humidity = weather.main.humidity;
-  if (humidity > 85) {
-    recommendations.push(
-      "💧 Kelembaban tinggi - risiko dehidrasi, bawa elektrolit"
-    );
-  }
-
-  // General recommendations based on score
-  if (score < 40) {
-    recommendations.push("🚫 Pertimbangkan untuk menunda pendakian");
-  } else if (score < 60) {
-    recommendations.push("✓ Pastikan persiapan lengkap sebelum berangkat");
-  } else {
-    recommendations.push("✓ Kondisi mendukung, nikmati pendakian Anda!");
-  }
-
-  return recommendations;
 };
