@@ -6,50 +6,61 @@ body {
   margin: 0;
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
     sans-serif;
-  /* Mountain theme background - subtle misty gradient */
-  background: linear-gradient(180deg, #ecf0f1 0%, #bdc3c7 100%);
-  background-attachment: fixed;
+  background: transparent;
 }
 
-/* Mountain Theme Glassmorphism - More subtle */
-.glass-mountain {
-  background: rgba(44, 62, 80, 0.85);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+/* SLATE PROFESSIONAL THEME - CONSISTENT COLORS */
+:root {
+  --color-primary: #1e293b;
+  --color-secondary: #3b82f6;
+  --color-accent: #f59e0b;
+  --color-text: #1e293b;
+  --color-text-light: #64748b;
 }
 
-.glass-light {
-  background: rgba(255, 255, 255, 0.9);
+/* ========== GLASSMORPHISM ========== */
+.glass {
+  background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Mountain Shadow - Soft and natural */
-.shadow-mountain {
-  box-shadow: 0 4px 20px rgba(44, 62, 80, 0.15), 0 2px 8px rgba(44, 62, 80, 0.1);
+.glass-strong {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.shadow-mountain-hover:hover {
-  box-shadow: 0 8px 30px rgba(44, 62, 80, 0.25),
-    0 4px 12px rgba(44, 62, 80, 0.15);
+/* ========== TEXT EFFECTS ========== */
+.text-glow {
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.5),
+    0 0 40px rgba(59, 130, 246, 0.3);
 }
 
-/* Accent glow for important elements */
-.shadow-accent {
-  box-shadow: 0 4px 15px rgba(230, 126, 34, 0.2);
+/* ========== SHADOW EFFECTS ========== */
+.shadow-glow {
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.3),
+    0 0 40px rgba(59, 130, 246, 0.2);
 }
 
-.shadow-accent-hover:hover {
-  box-shadow: 0 6px 25px rgba(230, 126, 34, 0.35);
+.shadow-glow-hover {
+  transition: all 0.3s ease;
 }
 
-/* Smooth Animations - Less aggressive */
-@keyframes fadeInUp {
+.shadow-glow-hover:hover {
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.5),
+    0 0 60px rgba(59, 130, 246, 0.4);
+}
+
+/* ========== ANIMATIONS ========== */
+
+/* Fade In Animation */
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
@@ -57,102 +68,128 @@ body {
   }
 }
 
-@keyframes gentleFloat {
+/* Slide In from Right */
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Slide In from Left */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Float Animation */
+@keyframes float {
   0%,
   100% {
     transform: translateY(0px);
   }
   50% {
-    transform: translateY(-10px);
+    transform: translateY(-15px);
   }
 }
 
-@keyframes fogDrift {
+/* Pulse Animation */
+@keyframes pulse {
   0%,
   100% {
-    transform: translateX(0) translateY(0);
-    opacity: 0.6;
+    opacity: 1;
   }
   50% {
-    transform: translateX(30px) translateY(-15px);
-    opacity: 0.3;
+    opacity: 0.7;
   }
 }
 
-.animate-fade-up {
-  animation: fadeInUp 0.5s ease-out;
+/* Animation Classes */
+.animate-fade-in {
+  animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
-.animate-gentle-float {
-  animation: gentleFloat 4s ease-in-out infinite;
+.animate-slide-in-right {
+  animation: slideInRight 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
-.animate-fog {
-  animation: fogDrift 20s ease-in-out infinite;
+.animate-slide-in-left {
+  animation: slideInLeft 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
-/* Mountain Text Gradient */
-.text-mountain {
-  background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
 
-.text-accent {
-  color: #e67e22;
+.animate-pulse-slow {
+  animation: pulse 3s ease-in-out infinite;
 }
 
-/* Smooth scroll */
+/* ========== PAGE TRANSITIONS ========== */
+.page-enter {
+  opacity: 0;
+  transform: translateX(20px);
+}
+
+.page-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+}
+
+.page-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.page-exit-active {
+  opacity: 0;
+  transform: translateX(-20px);
+  transition: opacity 300ms ease-in-out, transform 300ms ease-in-out;
+}
+
+/* ========== SMOOTH SCROLL ========== */
 html {
   scroll-behavior: smooth;
 }
 
-/* Custom Scrollbar - Mountain theme */
+/* ========== CUSTOM SCROLLBAR ========== */
 ::-webkit-scrollbar {
   width: 10px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #ecf0f1;
+  background: #f1f5f9;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+  background: linear-gradient(180deg, #1e293b 0%, #334155 100%);
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #e67e22;
+  background: #3b82f6;
 }
 
-/* Card hover effects - Subtle */
-.card-mountain {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* ========== TRANSITIONS ========== */
+* {
+  transition-property: background-color, border-color, color, fill, stroke,
+    opacity, box-shadow, transform;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.card-mountain:hover {
-  transform: translateY(-4px);
-}
-
-/* Weather card backgrounds */
-.weather-sunny {
-  background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-}
-
-.weather-cloudy {
-  background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
-}
-
-.weather-rainy {
-  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-}
-
-.weather-foggy {
-  background: linear-gradient(135deg, #bdc3c7 0%, #95a5a6 100%);
-}
-
-/* Line clamp */
+/* ========== UTILITIES ========== */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -167,4 +204,21 @@ html {
   overflow: hidden;
 }
 
-@import "maplibre-gl/dist/maplibre-gl.css";
+/* ========== BACKDROP BLUR SUPPORT ========== */
+@supports (backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px)) {
+  .backdrop-blur-sm {
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+
+  .backdrop-blur {
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+  }
+}
+
+/* ========== RESPONSIVE VIDEO BACKGROUND ========== */
+video {
+  object-fit: cover;
+  object-position: center;
+}
